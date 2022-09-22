@@ -33,7 +33,6 @@ def crt_list_decoding(B, p, d=4):
     hx = [(x - R) ** d * x**i for i in range(d)]
 
     L = Matrix(ZZ, [fill_zero(f.subs(x=x * B).list()) for f in gx + hx]).LLL()
-    res = []
     poly = Z(list(map(int, L[0]))).subs(x=x / B)
     return -Integer(poly.roots()[0][0])
 
