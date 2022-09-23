@@ -4,6 +4,8 @@ from Crypto.Util.number import bytes_to_long as bl, long_to_bytes as lb, isPrime
 from os import urandom
 from hashlib import sha384
 
+### Given ###
+
 magic_len = 17
 magic_num = bl(urandom(magic_len))
 s = 248
@@ -20,8 +22,24 @@ def magic_dlog(P, E, data):
     print("success")
 
 
+### Solution ###
+
+
 def crt_list_decoding(B, p, d=4):
+    """Calculate a smooth number.
+
+    :param B: Pair of the lower and upper bound.
+    :param p: List of the first n primes.
+    :param d: LLL parameter.
+    """
+
     def fill_zero(l, len_=d * 2):
+        """Fills an array of leading zeroes.
+
+        :param l: An array l, indicating coeffs of
+        a polynomial from increasing power left to right.
+        :param len_: The length to fill the array to.
+        """
         return l + [0] * (len_ - len(l))
 
     R = -B[0]
