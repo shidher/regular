@@ -12,10 +12,24 @@ s = 248
 
 
 def hash_(a):
+    """hash a number.
+
+    :param a: A random number.
+    """
+
     return int(sha384(lb(a)).hexdigest(), 16)
 
 
 def magic_dlog(P, E, data):
+    """magic_dlog challenge.
+    Given a magic_num before, provide the above
+    parameters satisfying this test case.
+
+    :param P: A number.
+    :param E: A number.
+    :param data: A number.
+    """
+
     assert P >> s == magic_num
     assert isPrime(P)
     assert pow(data, E, P) == hash_(data) % P
