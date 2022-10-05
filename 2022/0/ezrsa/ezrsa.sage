@@ -137,7 +137,7 @@ def replace_with(monomial, replaced, replacer):
         quotient, remainder = get_quo(monomial, replaced)
         if remainder != 0:
             break
-        monomial = (monomial // replaced) * replacer
+        monomial = quotient * replacer
     return monomial
 
 
@@ -164,6 +164,65 @@ def trans(f):
             monomial = replace_with(monomial, zp, zq + 1)
         f_temp += coeff * monomial
     return f_temp
+
+
+# Shift polynomials will have some root (x0, y0, z0) mod e^(2m)
+# This is just a random natural number
+m = 6
+# Calculate M partitions
+M1 = []
+M2 = []
+M3 = []
+M4 = []
+for a in range(m + 1):
+    for c in range(m + 1):
+        for b in range(a + c + 1):
+            poly = xp**a * yp**b * zp**c
+            if a <= c and b <= c - a:
+                M1.append(poly)
+            elif a > c and b < a - c:
+                M2.append(poly)
+            elif (a + b + c) % 2 == 0:
+                M3.append(poly)
+            else:
+                M4.append(poly)
+
+
+def power_of(monomial, term):
+    """Get the power of the term in a monomial.
+
+    :param monomial: A monomial.
+    :param term: A term.
+    """
+    i = 0
+    while 1:
+        quotient, remainder = get_quo(monomial, replaced)
+        if remainder != 0:
+            break
+        monomial = quotient * replacer
+        i += 1
+    return i
+
+
+# Define exponent functions
+def Ef(a, b, c):
+    """Ef.
+
+    :param a: a number.
+    :param b: a number.
+    :param c: a number.
+    """
+    f = xp**a + yp**b + zp**c
+    if f in M1:
+        return 0
+    elif f in M2:
+        return b
+    elif f in M3:
+        return (a + b - c) // 2
+    elif f in M4:
+        return (a + b - c + 1) // 2
+    else:
+        raise Exception("f should be in M1, M2, M3, or M4")
 
 
 ### Testing ###
