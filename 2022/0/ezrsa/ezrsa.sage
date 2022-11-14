@@ -120,6 +120,7 @@ def get_quo(f, g):
     :param f: The bigger polynomial.
     :param g: The smaller one.
     """
+
     r = f.reduce([g])
     return (f - r) // g, r
 
@@ -144,8 +145,7 @@ def replace_with(monomial, replaced, replacer):
 def trans(f):
     """trans is the operation on a polynomial
     that applies a series of operations on its monomials.
-    It creates two copies of
-    the Newton polytope of f
+    It creates two copies of the Newton polytope of f
     where one lies in the (xp, yp, zp) plane and the other lies
     in the (xq, yq, zq) plane.
 
@@ -194,6 +194,7 @@ def power_of(monomial, term):
     :param monomial: A monomial.
     :param term: A term.
     """
+
     i = 0
     while 1:
         quotient, remainder = get_quo(monomial, replaced)
@@ -221,6 +222,56 @@ def Ef(a, b, c):
         return (a + b - c) // 2
     elif f in M4:
         return (a + b - c + 1) // 2
+    else:
+        raise Exception("f should be in M1, M2, M3, or M4")
+
+
+def Eg(a, b, c):
+    f = xp**a + yp**b + zp**c
+    if f in M1:
+        return b
+    elif f in M2:
+        return 0
+    elif f in M3:
+        return (-a + b + c) // 2
+    elif f in M4:
+        return (-a + b + c - 1) // 2
+    else:
+        raise Exception("f should be in M1, M2, M3, or M4")
+
+
+def Eh(a, b, c):
+    f = xp**a + yp**b + zp**c
+    if f in M1:
+        return a
+    elif f in M2:
+        return c
+    elif f in M3:
+        return (a - b + c) // 2
+    elif f in M4:
+        return (a - b + c - 1) // 2
+    else:
+        raise Exception("f should be in M1, M2, M3, or M4")
+
+
+def Ex(a, b, c):
+    f = xp**a + yp**b + zp**c
+    if f in M2:
+        return a - b - c
+    elif f in M1 or f in M3 or f in M4:
+        return 0
+    else:
+        raise Exception("f should be in M1, M2, M3, or M4")
+
+
+def Ez(a, b, c):
+    f = xp**a + yp**b + zp**c
+    if f in M1:
+        return -a - b + c
+    elif f in M2 or f in M3:
+        return 0
+    elif f in M4:
+        return 1
     else:
         raise Exception("f should be in M1, M2, M3, or M4")
 
