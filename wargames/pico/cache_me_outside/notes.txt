@@ -1,0 +1,51 @@
+ghidra key bindings
+    l changes variable name
+    ctrl l changes variable type
+
+malloc rets pointer from heap. if it fails it rets null
+dat_ (light blue) are global vars. ghidra has a hard time interpreting this
+    they are stored in the bss, data sections
+    it wants to treat as a void pointer
+
+pwninit will download correct loader for you
+ld for loader
+    patchelf --set-interpreter ./ld-2.27.so ./heapedit
+    LD_PRELOAD=./libc.so.6 ./heapedit
+        this specifies what library you want to load in
+ldd heapedit
+    shows dependencies
+    we see libc.so.6 => ./libc.so.6 means heapedit is already pointing to the libc in the current directory
+    so we didn't have to specify LD_PRELOAD
+
+gef gdb
+    heap chunks
+    we see many malloc'ed chunks but our program didn't malloc all the time
+        answer is tcache has something to do with it
+        it's the first malloc allocation from this command
+
+tcache is made up of an byte array and pointer array
+    char counts[64]
+    tcache_entry *entries[64]
+        whenever a chunk gets freed, its address is put into entries[0] (linked list) and counts[0]++ if its size is 0x20 and counts[0] corresponds to chunk size 0x20s
+tcache is used to track free chunks because malloc is expensive (you gotta figure out how much memory is available in the system) and it's a perf improvement
+
+x/32gx 32 of these (g = 8 byte vals x = in hexadecimal)
+    we can examine the tcache, we see we have two freed chunks consistent with the code
+
+0x80 != 0x90 but malloc(0x80) will be allocated to 0x90
+
+p $rax (ret value)
+    heap chunk 0x... shows the size
+
+checksec heapedit
+    no pie = no aslr (means for stack)
+    heap always has aslr (last 3 nibbles always stay the same)
+
+gdb
+    ctrl-c
+    finish to step out of function call
+    enter repeats previous commands
+
+if problem didn't have %d, we'd need to supply an integer overflow because offset was negative
+
+tcache may've been introduced in 2.27, libc 2.28 wouldn't have allowed for this
